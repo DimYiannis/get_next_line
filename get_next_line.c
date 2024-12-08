@@ -9,7 +9,7 @@ int main()
 
     if (fd>0)
     {
-        /* code */
+        read();
     }
     
 }
