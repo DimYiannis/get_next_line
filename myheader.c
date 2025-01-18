@@ -1,29 +1,30 @@
 #include <fcntl.h>
 #include <stdlib.h>
-
+#include <unistd.h> 
 
 char *get_next_line(int fd)
 {
-    //opening file in read/write mode with open function
-    open(fd, O_RDWR);
+    // char static *stash;
+    // char *line;
 
-    if (fd>0)
+    if (fd > 0)
     {
-        read();
+        char buffer[1024];
+
+        read(fd, buffer, sizeof(buffer));
+        return buffer;
+        
     }
     else
     {
         return NULL;
     }
-    
 }
 
-char *_fill_line_buffer(int fd, char *left_c, char *buffer)
-{
+// char *_fill_line_buffer(int fd, char *left_c, char *buffer)
+// {
+// }
 
-}
-
-char *_set_line(char *line_buffer)
-{
-    
-}
+// char *_set_line(char *line_buffer)
+// {
+// }
