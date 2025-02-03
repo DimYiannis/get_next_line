@@ -20,10 +20,10 @@ char *get_next_line(int fd)
 
         while (bytesRead > 0)
         {
+            bytesRead = read(fd, buffer, 5);
             if (bytesRead <= 0)
                 break; // Break if no more data is read or error occurs
 
-            bytesRead = read(fd, buffer, 5);
             // populate stash
             for (int i = 0; i < bytesRead; i++)
             {
@@ -35,8 +35,8 @@ char *get_next_line(int fd)
                     {
                         *line++ = *stash; // Move characters forward to line
                     }
-
-                    // clean stash
+                    //reset stash back at its initial position
+                        stash++;
                 }
 
                 // Append current character to stash
@@ -47,11 +47,11 @@ char *get_next_line(int fd)
             return buffer;
         }
     }
+}
+// char *_fill_line_buffer(int fd, char *left_c, char *buffer)
+// {
+// }
 
-    // char *_fill_line_buffer(int fd, char *left_c, char *buffer)
-    // {
-    // }
-
-    // char *_set_line(char *line_buffer)
-    // {
-    // }
+// char *_set_line(char *line_buffer)
+// {
+// }
