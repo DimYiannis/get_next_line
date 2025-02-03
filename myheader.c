@@ -27,7 +27,12 @@ char *get_next_line(int fd)
             // populate stash
             for (int i = 0; i < bytesRead; i++)
             {
-                if (buffer[i] == '\n')
+                if (buffer[i] != '\n')
+                {
+                    // Append current character to stash
+                    *stash++ = buffer[i]; // Move stash pointer forward
+                }
+                else
                 {
                     *stash = '\0'; // null terminating string
                     // populating the line, moving backwards in stash and forward in line
@@ -35,17 +40,14 @@ char *get_next_line(int fd)
                     {
                         *line++ = *stash; // Move characters forward to line
                     }
-                    //reset stash back at its initial position
-                        stash++;
+                    // reset stash back at its initial position
+                    stash++;
                 }
-
-                // Append current character to stash
-                *stash++ = buffer[i]; // Move stash pointer forward            }
             }
-
-            printf("File Contents: %s\n", buffer);
-            return buffer;
         }
+
+        printf("File Contents: %s\n", buffer);
+        return buffer;
     }
 }
 // char *_fill_line_buffer(int fd, char *left_c, char *buffer)
