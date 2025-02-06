@@ -5,13 +5,13 @@ CC = gcc
 CFLAGS = -Wall -Wextra -Werror
 
 
-SRC = ft_printf.c main.c myheader.c  
+SRC = main.c myheader.c  
 
 # Object files (automatic conversion from .c to .o)
 OBJ = $(SRC:.c=.o)
 
 # Executable name
-NAME = my_printf
+NAME = get_next_line
 
 # Default target to build the executable
 all: $(NAME)
