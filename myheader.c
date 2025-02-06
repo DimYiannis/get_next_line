@@ -2,12 +2,14 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <string.h>
 
 #define BUFFER_SIZE 5
 
 char *get_next_line(int fd)
 {
-    static char *stash; // Static variable to store leftover characters
+    static char *stash;       // Static variable to store leftover characters
+    static char *stash_write; // Keep track of where we left off in stash
     char *buffer;
     char *line = malloc(1024);
     int bytesRead;
@@ -32,62 +34,43 @@ char *get_next_line(int fd)
             return NULL;
         }
         stash[0] = '\0';
-    }
-    line = malloc(1024); // Allocate memory for line
-    if (!line)
-    {
-        free(buffer);
-        free(stash);
-        return NULL;
+        stash_write = stash;
     }
 
-    char *stash_start = stash; // Save the starting position of stash
-    char *line_start = line;   // Save the starting position of line
+    char *stash_start = stash; // starting position of stash
+    char *line_start = line;   // original position of line
 
-    bytesRead = read(fd, buffer, BUFFER_SIZE);
-
-    while (bytesRead > 0)
+    // First read all content into stash
+    while ((bytesRead = read(fd, buffer, BUFFER_SIZE)) > 0)
     {
-        if (bytesRead <= 0)
-            break; // Break if no more data is read or error occurs
-
-        buffer[bytesRead] = '\0'; // Null-terminate buffer
         // populate stash
         for (int i = 0; i < bytesRead; i++)
         {
-            if (buffer[i] != '\n')
-            {
-                // Append current character to stash
-                *stash++ = buffer[i]; // Move stash pointer forward
-            }
-            else
-            {
-                *stash = '\0'; // null terminating string
-
-                stash = stash_start;
-                // populating the line, moving backwards in stash and forward in line
-                while (*stash)
-                {
-                    *line++ = *stash++; // Move characters forward to line
-                }
-                // reset stash back at its initial position
-                
-                *line = '\0';
-                free(buffer);
-                printf("File Contents: %s\n", line_start);
-                return line_start;
-            }
+            *stash_write++ = buffer[i];
         }
-        bytesRead = read(fd, buffer, BUFFER_SIZE);
     }
+    *stash_write = '\0';
+    free(buffer);
 
-    free(buffer); // Free buffer memory
-    // If we reached the end without any new lines, return NULL
-    if (stash_start == stash)
+    // Now check stash for newline and copy to line
+    while (*stash_start && *stash_start != '\n')
     {
-        free(line_start);
-        return NULL;
+        *line++ = *stash_start++;
     }
+    *line = '\0';
 
+    // If we found a newline, move past it for next time
+    if (*stash_start == '\n')
+        stash_start++;
+
+    // Move remaining content to start of stash
+    stash_write = stash; //move stash write in the beginning of stash
+    while (*stash_start)
+    {
+        *stash_write++ = *stash_start++; //copy remining characters
+    }
+    *stash_write = '\0'; //null terminate
+
+    printf("File Contents: %s\n", line_start);
     return line_start;
 }
