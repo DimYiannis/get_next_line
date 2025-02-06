@@ -16,5 +16,6 @@ int main()
     }
 
     get_next_line(fd);  
+    get_next_line(fd);  
 }    
     
