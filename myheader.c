@@ -52,7 +52,7 @@ char *get_next_line(int fd)
     *stash_write = '\0';
     free(buffer);
 
-    // Now check stash for newline and copy to line
+    // check stash for newline and copy to line
     while (*stash_start && *stash_start != '\n')
     {
         *line++ = *stash_start++;
